@@ -1,14 +1,15 @@
 import Footer from '@/components/Footer';
 import RightContent from '@/components/RightContent';
 import { LinkOutlined } from '@ant-design/icons';
-import { SettingDrawer } from '@ant-design/pro-components';
+import {PageLoading, SettingDrawer} from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import { requestConfig } from './requestConfig';
-import InitialState from "@@/plugin-initialState/@@initialState";
 import {getLoginUserUsingGET} from "@/services/api-backend/userController";
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
+
+
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
@@ -19,7 +20,10 @@ export async function getInitialState(): Promise<InitialState> {
   }
   try {
     const res = await getLoginUserUsingGET();
-    state.loginUser = res.data;
+    console.log("login user: " + res)
+    if (res.data) {
+      state.loginUser = res.data;
+    }
   } catch (error) {
     history.push(loginPath);
   }
@@ -35,13 +39,13 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       content: initialState?.loginUser?.userName,
     },
     footerRender: () => <Footer />,
-    onPageChange: () => {
-      const { location } = history;
-      // 如果没有登录，重定向到 login
-      if (!initialState?.loginUser && location.pathname !== loginPath) {
-        history.push(loginPath);
-      }
-    },
+    // onPageChange: () => {
+    //   const { location } = history;
+    //   // 如果没有登录，重定向到 login
+    //   if (!initialState?.loginUser && location.pathname !== loginPath) {
+    //     history.push(loginPath);
+    //   }
+    // },
     layoutBgImgList: [
       {
         src: 'https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/D2LWSqNny4sAAAAAAAAAAAAAFl94AQBr',
